@@ -9,16 +9,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int QUEUE_CAPACITY = 50;
+    private static final int QUEUE_CAPACITY = 50; // for use if we switch to BlockingQueue
     private static final long QUEUE_POLLING_INTERVAL_MILLIS = 500;
 
-    private BlockingQueue<DataMessage> mQueue;
+    private ConcurrentLinkedQueue<DataMessage> mQueue;
 
     private MyBackgroundThread mMyBackgroundThread;
     private Handler mResponseHandler;
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mQueue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
+        mQueue = new ConcurrentLinkedQueue<>();
 
         mOutputValueTextView = (TextView) findViewById(R.id.output_value_text_view);
 
@@ -73,12 +72,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleMessages() {
-        DataMessage message;
-        while (true) {
-            message = mQueue.poll(); // we don't want to block this thread so don't use .take()
-            if (message == null) {  // read until no more messages
-                break;
-            }
+        // read until no more messages
+        for (DataMessage message = mQueue.poll(); message != null; message = mQueue.poll()) {  // if we switch to a BlockingQueue, we don't want to block this thread so don't use .take()
 
             if (mSensing) { // its possible that we'll get a few more messages after we stop sensing. if so, ignore them
                 double value = message.getDataPoint().getValue();

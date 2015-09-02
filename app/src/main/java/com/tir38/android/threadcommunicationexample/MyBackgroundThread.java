@@ -2,7 +2,7 @@ package com.tir38.android.threadcommunicationexample;
 
 import android.util.Log;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.Queue;
 
 public class MyBackgroundThread extends Thread {
 
@@ -10,10 +10,10 @@ public class MyBackgroundThread extends Thread {
     private static final String TAG = MyBackgroundThread.class.getSimpleName();
     private static final long SENSOR_POLLING_INTERVAL_MILLIS = 1000;
 
-    private BlockingQueue mQueue;
+    private Queue mQueue;
     private final SoundMeter mSoundMeter;
 
-    public MyBackgroundThread(BlockingQueue queue) {
+    public MyBackgroundThread(Queue queue) {
         super(MY_BACKGROUND_THREAD);
         mQueue = queue;
         mSoundMeter = new SoundMeter();
@@ -31,7 +31,7 @@ public class MyBackgroundThread extends Thread {
             double amplitude = mSoundMeter.getAmplitudeEMA();
             DataMessage dataMessage = new DataMessage(new DataPoint(currentTimeMillis, amplitude));
             try {
-                mQueue.put(dataMessage);
+                mQueue.add(dataMessage);
                 Log.d(TAG, "adding new data point to queue: " + amplitude);
                 Thread.sleep(SENSOR_POLLING_INTERVAL_MILLIS);
             } catch (InterruptedException e) {
