@@ -15,7 +15,7 @@ Instead, we can scrap the `HandlerThread` and use a basic `Thread` instead. We c
 4. We can limit the number of items in the queue by using a `BlockingQueue`, instead of a `ConcurrentLinkedQueue`.
 
 
-No matter how we process these data points on the UI (via the `BlockingQueue` or a custom `Handler`) we will interfere with other UI events. So we need to take care that our processing doesn't block the UI thread.
+No matter how we process these data points on the UI (via a `Queue` or a `HandlerThread`) we will interfere with other UI events. So we need to take care that our processing doesn't block the UI thread.
 
 Suggested Reading:
 
