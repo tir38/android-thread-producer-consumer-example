@@ -3,7 +3,7 @@ After lecturing on the Looper, Handler, and HandlerThread chapter, a student ask
 For this use case, the `HandlerThread` is unneccessary for several reasons:
 
 1. Our background thread is just doing one thing: reading the sensor data. It doesn't need its own queue. We don't need to post messages to this queue. So a `Looper` and `MessageQueue` are unused.
-2. We need a new `Handler` on each thread we want to read sensor data. The HandlerThread would have to post messages to each of these threads. Right now we only read data from the UI thread. Imagine that we read on the UI thread and another background thread that wrote to a database. The background thread would have to post messages to two Handlers.
+2. We need a new `Handler` on each thread we want to read sensor data. The `HandlerThread` would have to post messages to each of these threads. Right now we only read data from the UI thread. Imagine that we read on the UI thread and another background thread that wrote to a database. The background thread would have to post messages to two Handlers.
 3. We can't adjust the priority of the messages after they are sent to target. The message queue is FIFO.
 4. The background thread is just dumping messages into the queue, without any concern if they are being read in fast enough. If the UI thread isn't processing messages fast enough, we'll end up with an ever-growing backlog of messages.
 
